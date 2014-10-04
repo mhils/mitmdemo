@@ -1,24 +1,30 @@
 import json
 import threading
 import re
-import flask
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import tornado.websocket
 from flask import Flask, send_from_directory
 
-app = Flask("mitm",static_folder="client/app")
+app = Flask("mitm", static_folder="client/app", static_url_path="")
 app_wsgi = tornado.wsgi.WSGIContainer(app)
+ws = None
+tornado_app = None
+tornado_thread = None
+flows = {}
+
+
+@app.route("/")
+def main():
+    return send_from_directory("client/app", "index.html")
+
 
 @app.route("/image/<id>")
 def serve_image(id):
     resp = flows[id].response
     return resp.content, resp.code, resp.headers
 
-@app.route("/")
-def main():
-    return send_from_directory("client/app", "index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
@@ -49,30 +55,21 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketHandler.clients.remove(self)
 
 
-app = None
-app_thread = None
-ws = None
-
-
-
-
 def start(ctx, argv):
-    global app, app_thread
-    app = tornado.web.Application([
+    global tornado_app, tornado_thread
+    tornado_app = tornado.web.Application([
         (r'/events', WebSocketHandler),
         (r".*", tornado.web.FallbackHandler, dict(fallback=app_wsgi))
     ])
-    app.listen(8085)
-
-    app_thread = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
-    app_thread.start()
+    tornado_app.listen(8085)
+    tornado_thread = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
+    tornado_thread.daemon = True
+    tornado_thread.start()
     print "started"
 
-flows = {}
 
-
-def handle_image(flow):
-    WebSocketHandler.broadcast("image", "/image/%s" % flow.id)
+def done():
+    print "done"
 
 
 def response(ctx, flow):
@@ -90,3 +87,6 @@ def response(ctx, flow):
     )
     if is_image:
         handle_image(flow)
+
+def handle_image(flow):
+    WebSocketHandler.broadcast("image", "/image/%s" % flow.id)
