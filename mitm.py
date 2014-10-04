@@ -13,6 +13,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
     events = []
 
+    def check_origin(self, origin):
+        return True
+
     def open(self, *args):
         print("open", "WebSocketChatHandler")
         WebSocketHandler.clients.append(self)
