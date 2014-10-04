@@ -3,10 +3,13 @@ import random
 import socket
 import threading
 import re
+import cStringIO
+from io import BytesIO
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import tornado.websocket
+from PIL import Image
 from flask import Flask, send_from_directory
 
 app = Flask("mitm", static_folder="client/app", static_url_path="")
@@ -57,7 +60,16 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketHandler.clients.remove(self)
 
 
+image_src = None
+
+def parse_image(d):
+    global image_src
+    s = BytesIO(d)
+    image_src = Image.open(s)
+
 def start(ctx, argv):
+    with open("wifi.jpg","rb") as f:
+        parse_image(f.read())
     global tornado_app, tornado_thread
     tornado_app = tornado.web.Application([
         (r'/events', WebSocketHandler),
@@ -123,7 +135,20 @@ def response(ctx, flow):
     if is_image:
         handle_image(flow)
 
+
 def handle_image(flow):
     WebSocketHandler.broadcast("image", dict(
         src=gethostbyaddr(flow.client_conn.address.host),
         url="/image/%s" % flow.id))
+    s = BytesIO(flow.response.content)
+    img = Image.open(s)
+
+    global image_src
+    dst = image_src.copy()
+    dst.thumbnail(img.size, Image.ANTIALIAS)
+
+    s = BytesIO()
+    dst.save(s, format="png")
+
+    flow.response.content = s.getvalue()
+    flow.response.headers["content-type"] = ["image/png"]
