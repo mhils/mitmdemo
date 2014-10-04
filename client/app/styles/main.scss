@@ -1,6 +1,7 @@
 $icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 
 @import 'bootstrap-sass-official/assets/stylesheets/bootstrap.scss';
+@import url(http://fonts.googleapis.com/css?family=Montserrat);
 
 .browsehappy {
     margin: 0.2em 0;
@@ -13,6 +14,7 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstr
 body {
     padding-top: 20px;
     padding-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */

@@ -1,4 +1,10 @@
-<div class="image-container">
-    <img src="<%= image.get('imageURL') %>" class="image img-rounded" />
+<div class="panel panel-default">
+    <div class="image-meta panel-heading">
+        <span class="image-src-container">From: <span class="image-src"><%= image.get('src') %></span></span>
+        <span class="image-dst-container pull-right">Server: <span class="image-dst"><%= image.get('dst') %></span></span>
+    </div>
+    <div class="image-container panel-body">
+        <img src="<%= image.get('imageURL') %>" class="image img-rounded" />
+    </div>
 </div>
-
+<hr />

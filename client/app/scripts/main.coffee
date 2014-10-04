@@ -12,6 +12,9 @@ require.config
     backbone: '../bower_components/backbone/backbone'
     underscore: '../bower_components/lodash/dist/lodash'
     bootstrap: '../bower_components/sass-bootstrap/dist/js/bootstrap'
+    springy: '../bower_components/springy/springy'
+    springyui: '../bower_components/springy/springyui'
+    utility: 'utility'
 
 require [
   'backbone', 'routes/main'

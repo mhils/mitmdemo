@@ -7,9 +7,10 @@ define [
   class ImageModel extends Backbone.Model
     url: ''
     imageURL: null
+    src: null
+    dst: null
 
-    initialize: (imageURL) ->
-      @set 'imageURL', imageURL
+    initialize: () ->
 
     defaults: {}
 

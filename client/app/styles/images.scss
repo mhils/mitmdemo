@@ -1,10 +1,13 @@
 .image {
   max-width: 100%;
-  border: 2px solid #bcbcbc;
 }
 
 .image-container {
-  background-color: grey;
+  background-color: rgb(250, 250, 250);
   padding: 20px;
   text-align: center;
+}
+
+.image-src, .image-dst {
+  font-weight: bold;
 }

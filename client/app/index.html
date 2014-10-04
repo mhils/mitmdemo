@@ -13,7 +13,6 @@
         <!-- endbuild -->
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
         <!-- endbuild -->
     </head>
     <body>
@@ -25,16 +24,25 @@
         <div class="container">
             <div class="header">
                 <ul class="nav nav-pills pull-right">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="/#/images">Images</a></li>
-                    <li><a href="/#/connections">Connections</a></li>
+                    <li id="home-button" class="active"><a href="#">Home</a></li>
+                    <li id="images-button"><a href="/#/images">Images</a></li>
+                    <li id="connections-button"><a href="/#/connections">Connections</a></li>
                 </ul>
-                <h3 class="text-muted">Client</h3>
+                <h3 class="text-muted">MITM</h3>
             </div>
 
             <div class="content">
-                <div id="images-container"></div>
-                <div id="connections-container"></div>
+                <div id="images-container">
+                    <div class="jumbotron" id="no-images">
+                        <h2>Let's snoop some images!</h2>
+                        <p>C'mon c'mon...</p>
+                    </div>
+                </div>
+                <div id="connections-container">
+                    <canvas id="springy-canvas" width="640" height="480">
+
+                    </canvas>
+                </div>
             </div>
 
             <!--
@@ -48,7 +56,7 @@
             </div>
 
             <div class="footer">
-                <p>♥ from the Yeoman team</p>
+                <p>Max Mils & Ruben Vereecken</p>
             </div>
 
         </div>

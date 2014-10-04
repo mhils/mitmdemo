@@ -34,8 +34,9 @@ define [
           when 'history'
             console.log obj.data
           when 'image'
-            image = new Image 'http://localhost:8085' + obj.data
+            console.log obj.data
+            image = new Image obj.data
             @trigger 'new:image', image
           when 'connection'
-            connection = new Connection
+            connection = new Connection obj.data
             @trigger 'new:connection', connection
