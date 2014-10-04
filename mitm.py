@@ -7,7 +7,7 @@ import tornado.wsgi
 import tornado.websocket
 from flask import Flask, send_from_directory
 
-app = Flask("mitm")
+app = Flask("mitm",static_folder="client")
 app_wsgi = tornado.wsgi.WSGIContainer(app)
 
 @app.route("/image/<id>")
@@ -17,7 +17,7 @@ def serve_image(id):
 
 @app.route("/")
 def main():
-    return send_from_directory("static", "index.html")
+    return send_from_directory("client", "index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
@@ -83,8 +83,9 @@ def response(ctx, flow):
     print "Received flow: %s" % flow
 
     is_image = (
-        re.search(r"jpe?g|png|gif|webm", flow.request.path) or
-        "image" in flow.response.headers.get_first("content-type", "")
+        (re.search(r"jpe?g|png|gif|webm", flow.request.path) or
+        "image" in flow.response.headers.get_first("content-type", ""))
+        and flow.response.content
     )
     if is_image:
         handle_image(flow)
