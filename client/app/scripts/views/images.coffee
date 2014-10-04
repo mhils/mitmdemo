@@ -8,6 +8,9 @@ define [
   class ImagesView extends Backbone.View
     template: JST['app/scripts/templates/images.ejs']
     imageTemplate: JST['app/scripts/templates/image.ejs']
+    images: []
+    sources: []
+    selected: null
 
     tagName: 'div'
 
@@ -15,7 +18,8 @@ define [
 
     className: ''
 
-    events: {}
+    events:
+      'click .view-buttons button': 'changeView'
 
     initialize: () ->
       super arguments...
@@ -24,11 +28,19 @@ define [
     render: () ->
       console.debug 'image view rendered'
       #@$el.html @template()
+      $('#no-images').hide() if (@images.length)
       $('#images-button').addClass 'active'
+      @$el.html @template images: @images, sources: @sources, selected: @selected
 
     onNewImage: (image) ->
       console.log 'on new image', image
       util.getImageSize image.get('imageURL'), (img) =>
         unless img.width <= 5 or img.height <= 5
-          $('#no-images').hide()
-          @$el.append @imageTemplate image: image
+          @images.push image
+          @sources.push image.get('src') unless image.get('src') in @sources
+          @render()
+
+    changeView: (e) ->
+      console.debug 'selecting ', $(e.currentTarget).data 'source'
+      @selected = $(e.currentTarget).data 'source'
+      @render()

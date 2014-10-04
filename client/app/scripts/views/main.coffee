@@ -36,6 +36,7 @@ define [
           when 'image'
             console.log obj.data
             image = new Image obj.data
+            image.set 'imageURL', 'http://localhost:8085' + image.get 'imageURL'
             @trigger 'new:image', image
           when 'connection'
             connection = new Connection obj.data

@@ -1,0 +1,37 @@
+<% if (!images.length) {%>
+<div class="jumbotron" id="no-images">
+    <h2>Let's snoop some images!</h2>
+    <p>C'mon c'mon...</p>
+</div>
+<% } else { %>
+    <div class="view-buttons">
+        <button type="button" class="btn btn-default">Default</button>
+        <% for (var i = 0; i < sources.length; i++) { var source = sources[i]; %>
+        <button type="button" class="btn btn-default" data-source="<%= source%>"><%= source%></button>
+        <%}%>
+    </div>
+    <% if (!selected) {%>
+        <% for (var i=0; i < images.length; i++) { var image = images[i]; %>
+            <div class="panel panel-default">
+                <div class="image-meta panel-heading">
+                    <span class="image-src-container">From: <span class="image-src"><%= image.get('src') %></span></span>
+                    <span class="image-dst-container pull-right">Server: <span class="image-dst"><%= image.get('dst') %></span></span>
+                </div>
+                <div class="image-container panel-body">
+                    <img src="<%= image.get('imageURL') %>" class="image img-rounded" />
+                </div>
+            </div>
+        <% } %>
+    <% } else { %>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                From <span class="image-src"><%= selected %></span>
+            </div>
+            <div class="panel-body">
+                <% for (var i=0; i < images.length; i++) { var image = images[i]; %>
+                    <img src="<%= image.get('imageURL') %>" class="image img-rounded image-grouped" />
+                <% } %>
+            </div>
+        </div>
+    <% } %>
+<% } %>

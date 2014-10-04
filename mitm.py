@@ -126,4 +126,5 @@ def response(ctx, flow):
 def handle_image(flow):
     WebSocketHandler.broadcast("image", dict(
         src=gethostbyaddr(flow.client_conn.address.host),
-        url="/image/%s" % flow.id))
+        dst=gethostbyaddr(flow.server_conn.address.host),
+        imageURL="/image/%s" % flow.id))
