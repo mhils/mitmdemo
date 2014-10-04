@@ -1,9 +1,29 @@
-<div class="jumbotron">
-    <p>Let's replace ALL of the images going through the network with one of ours! How devious.</p>
+<ul id="hack-tab" class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="#picture-tab" role="tab" data-toggle="tab">Pictures</a></li>
+    <li class=""><a href="#rick-tab" role="tab" data-toggle="tab">Rickroll</a></li>
+</ul>
 
-    <form method="post" action="/file">
-        <input type="file" id="file-upload" />
-        <input type="submit" class="btn btn-default" />
-    </form>
+<div id="hack-tab-content" class="tab-content">
+    <div class="tab-pane" id="picture-tab">
+        <div class="jumbotron">
+            <p>Let's replace ALL of the images going through the network with one of ours! How devious.</p>
+
+            <form method="post" action="/file">
+                <input type="file" id="file-upload"/>
+                <input type="submit" class="btn btn-default"/>
+            </form>
+        </div>
+    </div>
+    <div id="rick-tab" class="tab-pane">
+        <div class="jumbotron">
+            <button type="button" class="btn btn-default" id="rick-button">
+                <% if (toggled) {%>
+                    Toggle off
+                <% } else {%>
+                    Toggle on
+                <% }%>
+            </button>
+            <div id="great-success" class="hidden">Great stuff!</div>
+        </div>
+    </div>
 </div>
-

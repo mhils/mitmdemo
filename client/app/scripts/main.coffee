@@ -15,6 +15,7 @@ require.config
     springy: '../bower_components/springy/springy'
     springyui: '../bower_components/springy/springyui'
     utility: 'utility'
+    bootstraptabs: '../bower_components/bootstrap/js/tab'
 
 require [
   'backbone', 'routes/main'
