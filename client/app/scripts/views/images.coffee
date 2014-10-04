@@ -6,17 +6,26 @@ define [
 ], ($, _, Backbone, JST) ->
   class ImagesView extends Backbone.View
     template: JST['app/scripts/templates/images.ejs']
+    imageTemplate: JST['app/scripts/templates/image.ejs']
 
     tagName: 'div'
 
-    id: ''
+    id: 'images-container'
 
     className: ''
 
     events: {}
 
+
     initialize: () ->
-        @listenTo @model, 'change', @render
+      super arguments...
+      console.log 'image view initialized '
+      @render()
 
     render: () ->
-        @$el.html @template(@model.toJSON())
+      console.debug 'image view rendered'
+      @$el.html @template()
+
+    onNewImage: (image) ->
+      console.debug 'on new image'
+      @$el.append @imageTemplate image: image

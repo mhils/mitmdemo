@@ -14,6 +14,14 @@ require.config
     bootstrap: '../bower_components/sass-bootstrap/dist/js/bootstrap'
 
 require [
-  'backbone'
-], (Backbone) ->
+  'backbone', 'routes/main'
+], (Backbone, Router) ->
+  ###
+
+  router.on 'route:images', ->
+    console.log 'routed to images'
+    console.log ImagesView
+  ###
+  router = new Router
   Backbone.history.start()
+
