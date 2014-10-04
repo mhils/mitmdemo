@@ -74,6 +74,26 @@ def done():
     print "done"
 
 
+def memoize(f):
+    memo = {}
+    def wrapper(x):
+        if x not in memo:
+            memo[x] = f(x)
+        return memo[x]
+    return wrapper
+
+
+@memoize
+def gethostbyaddr(ip):
+    try:
+        print "gethostbyaddr..."
+        host = socket.gethostbyaddr(ip)[0]
+        print host
+        return host
+    except:
+        return ip
+
+
 def clientconnect(ctx, conn):
     def async():
         src = gethostbyaddr(conn.client_conn.address.host)
@@ -104,22 +124,6 @@ def response(ctx, flow):
         handle_image(flow)
 
 def handle_image(flow):
-    WebSocketHandler.broadcast("image", "/image/%s" % flow.id)
-
-def memoize(f):
-    memo = {}
-    def wrapper(x):
-        if x not in memo:
-            memo[x] = f(x)
-        return memo[x]
-    return wrapper
-
-@memoize
-def gethostbyaddr(ip):
-    try:
-        print "gethostbyaddr..."
-        host = socket.gethostbyaddr(ip)[0]
-        print host
-        return host
-    except:
-        return ip
+    WebSocketHandler.broadcast("image", dict(
+        src=gethostbyaddr(flow.client_conn.address.host),
+        url="/image/%s" % flow.id))
