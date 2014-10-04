@@ -1,4 +1,6 @@
 import json
+import random
+import socket
 import threading
 import re
 import tornado.ioloop
@@ -72,6 +74,19 @@ def done():
     print "done"
 
 
+def clientconnect(ctx, conn):
+    def async():
+        src = gethostbyaddr(conn.client_conn.address.host)
+        if conn.server_conn:
+            dst = gethostbyaddr(conn.server_conn.address.host)
+        else:
+            dst = random.choice(["example.com","github.com","tinder.com"])
+        WebSocketHandler.broadcast("connection", dict(src=src, dst=dst))
+    t = threading.Thread(target=async)
+    t.daemon = True
+    t.start()
+
+
 def response(ctx, flow):
     """
     @param flow: libmproxy.protocol.http.HTTPFlow
@@ -90,3 +105,21 @@ def response(ctx, flow):
 
 def handle_image(flow):
     WebSocketHandler.broadcast("image", "/image/%s" % flow.id)
+
+def memoize(f):
+    memo = {}
+    def wrapper(x):
+        if x not in memo:
+            memo[x] = f(x)
+        return memo[x]
+    return wrapper
+
+@memoize
+def gethostbyaddr(ip):
+    try:
+        print "gethostbyaddr..."
+        host = socket.gethostbyaddr(ip)[0]
+        print host
+        return host
+    except:
+        return ip
