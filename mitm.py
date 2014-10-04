@@ -1,13 +1,14 @@
 import json
 import threading
 import re
+import flask
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import tornado.websocket
 from flask import Flask, send_from_directory
 
-app = Flask("mitm",static_folder="client")
+app = Flask("mitm",static_folder="client/app")
 app_wsgi = tornado.wsgi.WSGIContainer(app)
 
 @app.route("/image/<id>")
@@ -17,7 +18,7 @@ def serve_image(id):
 
 @app.route("/")
 def main():
-    return send_from_directory("client", "index.html")
+    return send_from_directory("client/app", "index.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []

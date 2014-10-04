@@ -77,6 +77,13 @@
 
         </div>
 
+        <script>
+            ws = new WebSocket("ws://127.0.0.1:8085/events");
+            ws.onmessage = function(e){
+                console.log(JSON.parse(e.data));
+            }
+        </script>
+
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
