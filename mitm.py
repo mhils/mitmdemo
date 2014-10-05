@@ -91,7 +91,7 @@ def start(ctx, argv):
         (r'/events', WebSocketHandler),
         (r".*", tornado.web.FallbackHandler, dict(fallback=app_wsgi))
     ])
-    tornado_app.listen(8085)
+    tornado_app.listen(8095)
     tornado_thread = threading.Thread(target=tornado.ioloop.IOLoop.instance().start)
     tornado_thread.daemon = True
     tornado_thread.start()
