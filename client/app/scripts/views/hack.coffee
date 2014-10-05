@@ -27,11 +27,11 @@ define [
       $('#hack-button').addClass 'active'
       @$el.html @template toggled: @rickToggled
       unless @renderedOnce
+        @renderedOnce = true
         $ ->
           $('#hack-tab a').click (e) ->
             e.preventDefault()
             $(@).tab('show')
-        @renderedOnce = true
       $('#picture-tab').addClass 'active'
 
     toggleRick: =>
@@ -44,7 +44,8 @@ define [
           $('#rick-button').removeAttr 'disabled'
           $('#great-success').removeClass 'hidden'
           @rickToggled = not @rickToggled
-          @render()
+          newText = if @rickToggled then 'Toggle off' else 'Toggle on'
+          $('#rick-button').html(newText)
 
     submitFile: =>
       $('#submit-file').attr 'disabled', true
