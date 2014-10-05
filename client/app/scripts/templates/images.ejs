@@ -11,7 +11,7 @@
         <%}%>
     </div>
     <% if (!selected) {%>
-        <% for (var i=0; i < images.length; i++) { var image = images[i]; %>
+        <% for (var i=images.length - 1; i >= 0; i--) { var image = images[i]; %>
             <div class="panel panel-default">
                 <div class="image-meta panel-heading">
                     <span class="image-src-container">From: <span class="image-src"><%= image.get('src') %></span></span>

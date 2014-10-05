@@ -30,14 +30,19 @@ define [
       @socket.onmessage = (e) =>
         obj = JSON.parse e.data
         console.log obj
-        switch obj.type
-          when 'history'
-            console.log obj.data
-          when 'image'
-            console.log obj.data
-            image = new Image obj.data
-            image.set 'imageURL', 'http://localhost:8085' + image.get 'imageURL'
-            @trigger 'new:image', image
-          when 'connection'
-            connection = new Connection obj.data
-            @trigger 'new:connection', connection
+        if obj.type is 'history'
+          for obj in obj.data
+            @handleStuff obj
+        else
+          @handleStuff obj
+
+    handleStuff: (obj) ->
+      switch obj.type
+        when 'image'
+          console.log obj.data
+          image = new Image obj.data
+          image.set 'imageURL', 'http://localhost:8085' + image.get 'imageURL'
+          @trigger 'new:image', image
+        when 'connection'
+          connection = new Connection obj.data
+          @trigger 'new:connection', connection
