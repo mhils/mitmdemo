@@ -28,8 +28,6 @@ define [
       unless @renderedOnce
         $ ->
           $('#hack-tab a').click (e) ->
-            console.debug 'tab tab'
-            console.debug @
             e.preventDefault()
             $(@).tab('show')
         @renderedOnce = true
@@ -45,3 +43,4 @@ define [
           $('#rick-button').removeAttr 'disabled'
           $('#great-stuff').removeClass 'hidden'
           @rickToggled = not @rickToggled
+          @render()

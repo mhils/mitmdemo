@@ -17,7 +17,7 @@
 
       MainView.prototype.tagName = 'div';
 
-      MainView.prototype.id = 'main-view';
+      MainView.prototype.id = 'main-container';
 
       MainView.prototype.className = '';
 

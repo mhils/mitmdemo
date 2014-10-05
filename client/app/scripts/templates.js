@@ -98,7 +98,7 @@ this["JST"]["app/scripts/templates/main.ejs"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<p>Your content here.</p>\n\n';
+__p += '<div class="jumbotron">\n    <p>\n        <h3>Free WiFi</h3>\n        <h4>seriously.</h4>\n    </p>\n</div>\n';
 
 }
 return __p

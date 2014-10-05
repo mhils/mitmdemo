@@ -15,6 +15,8 @@
 
       MainRouter.prototype.connectionsView = null;
 
+      MainRouter.prototype.active = null;
+
       MainRouter.prototype.routes = {
         'images': 'images',
         'connections': 'connections',
@@ -29,8 +31,10 @@
         console.debug('routed to images');
         this.connectionsView.$el.hide();
         this.hackView.$el.hide();
+        this.mainView.$el.hide();
         this.imagesView.$el.show();
-        return this.imagesView.render();
+        this.imagesView.render();
+        return this.active = this.imagesView;
       };
 
       MainRouter.prototype.connections = function() {
@@ -38,8 +42,10 @@
         console.debug('routed to connections');
         this.imagesView.$el.hide();
         this.hackView.$el.hide();
+        this.mainView.$el.hide();
         this.connectionsView.$el.show();
-        return this.connectionsView.render();
+        this.connectionsView.render();
+        return this.active = this.connectionsView;
       };
 
       MainRouter.prototype.hack = function() {
@@ -47,8 +53,10 @@
         console.debug('routed to hack');
         this.imagesView.$el.hide();
         this.connectionsView.$el.hide();
+        this.mainView.$el.hide();
         this.hackView.$el.show();
-        return this.hackView.render();
+        this.hackView.render();
+        return this.active = this.hackView;
       };
 
       MainRouter.prototype.main = function() {
@@ -56,14 +64,18 @@
         console.debug('main view');
         this.imagesView.$el.hide();
         this.connectionsView.$el.hide();
-        this.hackView.$el.show();
-        return this.mainView.render();
+        this.hackView.$el.hide();
+        this.mainView.$el.show();
+        this.mainView.render();
+        return this.active = this.mainView;
       };
 
       MainRouter.prototype.initialize = function() {
         MainRouter.__super__.initialize.apply(this, arguments);
         console.log('router initialized');
-        this.mainView = new MainView;
+        this.mainView = new MainView({
+          el: $('#main-container')
+        });
         this.imagesView = new ImageView({
           el: $('#images-container')
         });

@@ -4,6 +4,7 @@ define [
   class MainRouter extends Backbone.Router
     imagesView: null
     connectionsView: null
+    active: null
 
     routes:
       'images': 'images'
@@ -17,42 +18,51 @@ define [
       console.debug 'routed to images'
       @connectionsView.$el.hide()
       @hackView.$el.hide()
+      @mainView.$el.hide()
       @imagesView.$el.show()
       @imagesView.render()
+      @active = @imagesView
 
     connections: ->
       @resetMenu()
       console.debug 'routed to connections'
       @imagesView.$el.hide()
       @hackView.$el.hide()
+      @mainView.$el.hide()
       @connectionsView.$el.show()
       @connectionsView.render()
+      @active = @connectionsView
 
     hack: ->
       @resetMenu()
       console.debug 'routed to hack'
       @imagesView.$el.hide()
       @connectionsView.$el.hide()
+      @mainView.$el.hide()
       @hackView.$el.show()
       @hackView.render()
+      @active = @hackView
 
     main: ->
       @resetMenu()
       console.debug 'main view'
       @imagesView.$el.hide()
       @connectionsView.$el.hide()
-      @hackView.$el.show()
+      @hackView.$el.hide()
+      @mainView.$el.show()
       @mainView.render()
+      @active = @mainView
 
     initialize: ->
       super arguments...
       console.log 'router initialized'
-      @mainView = new MainView
+      @mainView = new MainView el: $ '#main-container'
       @imagesView = new ImageView el: $('#images-container')
       @connectionsView = new ConnectionsView el: $ '#connections-container'
       @hackView = new HackView el: $ '#hack-container'
 
       @mainView.on 'new:image', (image) =>
+        #@images() unless @active is @imagesView
         @imagesView.onNewImage image
       @mainView.on 'new:connection', (connection) =>
         @connectionsView.onNewConnection connection

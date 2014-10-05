@@ -39,8 +39,6 @@
         if (!this.renderedOnce) {
           $(function() {
             return $('#hack-tab a').click(function(e) {
-              console.debug('tab tab');
-              console.debug(this);
               e.preventDefault();
               return $(this).tab('show');
             });
@@ -60,7 +58,8 @@
             console.debug('all is well');
             $('#rick-button').removeAttr('disabled');
             $('#great-stuff').removeClass('hidden');
-            return _this.rickToggled = !_this.rickToggled;
+            _this.rickToggled = !_this.rickToggled;
+            return _this.render();
           };
         })(this));
       };

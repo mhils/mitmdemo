@@ -13,7 +13,7 @@ define [
 
     tagName: 'div'
 
-    id: 'main-view'
+    id: 'main-container'
 
     className: ''
 
