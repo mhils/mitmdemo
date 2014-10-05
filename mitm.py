@@ -140,7 +140,7 @@ def response(ctx, flow):
     @param flow: libmproxy.protocol.http.HTTPFlow
     """
     flows[flow.id] = flow.copy()
-    WebSocketHandler.broadcast("flow", flow.get_state(short=True))
+    #WebSocketHandler.broadcast("flow", flow.get_state(short=True))
     print "Received flow: %s" % flow
 
     is_image = (
