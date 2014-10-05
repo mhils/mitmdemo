@@ -1,0 +1,26 @@
+/* line 1, ../../app/styles/images.scss */
+.image {
+  max-width: 100%;
+}
+
+/* line 5, ../../app/styles/images.scss */
+.image-grouped {
+  margin: 5px;
+}
+
+/* line 9, ../../app/styles/images.scss */
+.image-container {
+  background-color: #fafafa;
+  padding: 20px;
+  text-align: center;
+}
+
+/* line 15, ../../app/styles/images.scss */
+.image-src, .image-dst {
+  font-weight: bold;
+}
+
+/* line 19, ../../app/styles/images.scss */
+.view-buttons {
+  margin-bottom: 20px;
+}
