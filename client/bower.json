@@ -10,7 +10,8 @@
     "requirejs-text": "~2.0.10",
     "modernizr": "~2.7.1",
     "springy": null,
-    "jquery-file-upload": null
+    "jquery-file-upload": null,
+    "bootstrap": null
   },
   "devDependencies": {}
 }
