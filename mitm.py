@@ -31,7 +31,7 @@ def main():
 
 @app.route('/file', methods=['POST'])
 def upload_file():
-    f = req.files["file"]
+    f = req.files[req.files.keys()[0]]
     b = BytesIO()
     f.save(b)
     parse_image(b.getvalue())
