@@ -3,14 +3,14 @@ import random
 import socket
 import threading
 import re
-import cStringIO
 from io import BytesIO
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import tornado.websocket
 from PIL import Image
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, redirect
+from flask import request as req
 from libmproxy.protocol.http import decoded, HTTPResponse
 from netlib.odict import ODictCaseless
 
@@ -20,12 +20,21 @@ ws = None
 tornado_app = None
 tornado_thread = None
 flows = {}
+image_src = None
 
 
 @app.route("/")
 def main():
     return send_from_directory("client/app", "index.html")
 
+
+@app.route('/file', methods=['POST'])
+def upload_file():
+    f = req.files["file"]
+    b = BytesIO()
+    f.save(b)
+    parse_image(b.getvalue())
+    return redirect("/")
 
 @app.route("/image/<id>")
 def serve_image(id):
@@ -62,16 +71,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketHandler.clients.remove(self)
 
 
-image_src = None
-
 def parse_image(d):
     global image_src
     s = BytesIO(d)
     image_src = Image.open(s)
 
 def start(ctx, argv):
-    with open("wifi.jpg","rb") as f:
-        parse_image(f.read())
+    #with open("wifi.jpg","rb") as f:
+    #    parse_image(f.read())
     global tornado_app, tornado_thread
     tornado_app = tornado.web.Application([
         (r'/events', WebSocketHandler),
@@ -148,25 +155,31 @@ def response(ctx, flow):
 
 
 def handle_image(flow):
-    WebSocketHandler.broadcast("image", dict(
-        src=gethostbyaddr(flow.client_conn.address.host),
-        dst=gethostbyaddr(flow.server_conn.address.host),
-        imageURL="/image/%s" % flow.id))
-    s = BytesIO(flow.response.content)
-    img = Image.open(s)
+    def async():
+        WebSocketHandler.broadcast("image", dict(
+            src=gethostbyaddr(flow.client_conn.address.host),
+            dst=gethostbyaddr(flow.server_conn.address.host),
+            imageURL="/image/%s" % flow.id))
+    t = threading.Thread(target=async)
+    t.daemon = True
+    t.start()
 
-    global image_src
-    dst = image_src.copy()
-    dst.thumbnail(img.size, Image.ANTIALIAS)
+    if image_src:
+        s = BytesIO(flow.response.content)
+        img = Image.open(s)
 
-    s = BytesIO()
-    dst.save(s, format="png")
+        global image_src
+        dst = image_src.copy()
+        dst.thumbnail(img.size, Image.ANTIALIAS)
 
-    flow.response.content = s.getvalue()
-    flow.response.headers["content-type"] = ["image/png"]
+        s = BytesIO()
+        dst.save(s, format="png")
+
+        flow.response.content = s.getvalue()
+        flow.response.headers["content-type"] = ["image/png"]
 
 
-do_rick = True
+do_rick = False
 
 def handle_html(flow):
     global do_rick
