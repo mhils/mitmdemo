@@ -21,6 +21,7 @@ tornado_app = None
 tornado_thread = None
 flows = {}
 image_src = None
+do_rick = False
 
 
 @app.route("/")
@@ -35,6 +36,11 @@ def upload_file():
     f.save(b)
     parse_image(b.getvalue())
     return redirect("/")
+
+@app.route("/rick", methods=['POST'])
+def rick():
+    global do_rick
+    do_rick = not do_rick
 
 @app.route("/image/<id>")
 def serve_image(id):
@@ -178,8 +184,6 @@ def handle_image(flow):
         flow.response.content = s.getvalue()
         flow.response.headers["content-type"] = ["image/png"]
 
-
-do_rick = False
 
 def handle_html(flow):
     global do_rick
