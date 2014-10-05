@@ -18,6 +18,7 @@ define [
 
     events:
       'click #rick-button': 'toggleRick'
+      'click #submit-file': 'submitFile'
 
     initialize: () ->
 
@@ -35,12 +36,27 @@ define [
 
     toggleRick: =>
       $('#rick-button').attr 'disabled', true
-      $('#great-stuff').addClass 'hidden'
+      $('#great-success').addClass 'hidden'
       $.post '/rick',
         {toggle: not @rickToggled},
         (data) =>
           console.debug 'all is well'
           $('#rick-button').removeAttr 'disabled'
-          $('#great-stuff').removeClass 'hidden'
+          $('#great-success').removeClass 'hidden'
           @rickToggled = not @rickToggled
           @render()
+
+    submitFile: =>
+      $('#submit-file').attr 'disabled', true
+      $('#great-success-file').addClass 'hidden'
+      file = $('#file-upload').get()[0].files[0]
+      formData = new FormData()
+      formData.append(file.name, file);
+      xhr = new XMLHttpRequest()
+      xhr.open('POST', "/file", true)
+      xhr.onload = (e) =>
+        console.debug 'all is well'
+        $('#submit-file').removeAttr 'disabled'
+        $('#great-success-file').removeClass 'hidden'
+        @render()
+      xhr.send(formData)
