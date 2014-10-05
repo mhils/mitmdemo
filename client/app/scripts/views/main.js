@@ -32,7 +32,7 @@
       };
 
       MainView.prototype.setupSocketListening = function() {
-        this.socket = new WebSocket("ws://127.0.0.1:8085/events");
+        this.socket = new WebSocket("ws://127.0.0.1:8095/events");
         return this.socket.onmessage = (function(_this) {
           return function(e) {
             var obj, _i, _len, _ref, _results;
@@ -59,7 +59,7 @@
           case 'image':
             console.log(obj.data);
             image = new Image(obj.data);
-            image.set('imageURL', 'http://localhost:8085' + image.get('imageURL'));
+            image.set('imageURL', 'http://localhost:8095' + image.get('imageURL'));
             return this.trigger('new:image', image);
           case 'connection':
             connection = new Connection(obj.data);
