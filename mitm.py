@@ -40,7 +40,8 @@ def upload_file():
 @app.route("/rick", methods=['POST'])
 def rick():
     global do_rick
-    do_rick = not do_rick
+    do_rick = (req.form["toggle"] == u"true")
+    return ""
 
 @app.route("/image/<id>")
 def serve_image(id):
@@ -138,7 +139,7 @@ def response(ctx, flow):
     """
     @param flow: libmproxy.protocol.http.HTTPFlow
     """
-    flows[flow.id] = flow
+    flows[flow.id] = flow.copy()
     WebSocketHandler.broadcast("flow", flow.get_state(short=True))
     print "Received flow: %s" % flow
 
@@ -170,11 +171,10 @@ def handle_image(flow):
     t.daemon = True
     t.start()
 
+    global image_src
     if image_src:
         s = BytesIO(flow.response.content)
         img = Image.open(s)
-
-        global image_src
         dst = image_src.copy()
         dst.thumbnail(img.size, Image.ANTIALIAS)
 
