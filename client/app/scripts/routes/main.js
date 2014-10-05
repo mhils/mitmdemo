@@ -34,6 +34,7 @@
         this.mainView.$el.hide();
         this.imagesView.$el.show();
         this.imagesView.render();
+        $('#images-button').addClass('active');
         return this.active = this.imagesView;
       };
 

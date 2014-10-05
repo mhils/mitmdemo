@@ -63,7 +63,6 @@ define [
       @hackView = new HackView el: $ '#hack-container'
 
       @mainView.on 'new:image', (image) =>
-        #@images() unless @active is @imagesView
         @imagesView.onNewImage image
       @mainView.on 'new:connection', (connection) =>
         @connectionsView.onNewConnection connection

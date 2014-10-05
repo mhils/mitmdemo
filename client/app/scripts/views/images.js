@@ -42,7 +42,6 @@
         if (this.images.length) {
           $('#no-images').hide();
         }
-        $('#images-button').addClass('active');
         return this.$el.html(this.template({
           images: this.images,
           sources: this.sources,
