@@ -21,6 +21,7 @@ define [
       @mainView.$el.hide()
       @imagesView.$el.show()
       @imagesView.render()
+      $('#images-button').addClass 'active'
       @active = @imagesView
 
     connections: ->

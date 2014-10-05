@@ -29,7 +29,6 @@ define [
       console.debug 'image view rendered'
       #@$el.html @template()
       $('#no-images').hide() if (@images.length)
-      $('#images-button').addClass 'active'
       @$el.html @template images: @images, sources: @sources, selected: @selected
 
     onNewImage: (image) ->
