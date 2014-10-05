@@ -36,12 +36,12 @@ define [
       $('#picture-tab').addClass 'active'
 
     toggleRick: =>
-      @rickToggled = true
       $('#rick-button').attr 'disabled', true
       $('#great-stuff').addClass 'hidden'
       $.post '/rick',
-        {toggle: @rickToggled},
+        {toggle: not @rickToggled},
         (data) =>
           console.debug 'all is well'
           $('#rick-button').removeAttr 'disabled'
           $('#great-stuff').removeClass 'hidden'
+          @rickToggled = not @rickToggled
