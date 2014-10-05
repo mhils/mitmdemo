@@ -9,6 +9,7 @@
       __extends(HackView, _super);
 
       function HackView() {
+        this.submitFile = __bind(this.submitFile, this);
         this.toggleRick = __bind(this.toggleRick, this);
         return HackView.__super__.constructor.apply(this, arguments);
       }
@@ -26,7 +27,8 @@
       HackView.prototype.className = '';
 
       HackView.prototype.events = {
-        'click #rick-button': 'toggleRick'
+        'click #rick-button': 'toggleRick',
+        'click #submit-file': 'submitFile'
       };
 
       HackView.prototype.initialize = function() {};
@@ -37,31 +39,53 @@
           toggled: this.rickToggled
         }));
         if (!this.renderedOnce) {
+          this.renderedOnce = true;
           $(function() {
             return $('#hack-tab a').click(function(e) {
               e.preventDefault();
               return $(this).tab('show');
             });
           });
-          this.renderedOnce = true;
         }
         return $('#picture-tab').addClass('active');
       };
 
       HackView.prototype.toggleRick = function() {
         $('#rick-button').attr('disabled', true);
-        $('#great-stuff').addClass('hidden');
+        $('#great-success').addClass('hidden');
         return $.post('/rick', {
           toggle: !this.rickToggled
         }, (function(_this) {
           return function(data) {
+            var newText;
             console.debug('all is well');
             $('#rick-button').removeAttr('disabled');
-            $('#great-stuff').removeClass('hidden');
+            $('#great-success').removeClass('hidden');
             _this.rickToggled = !_this.rickToggled;
-            return _this.render();
+            newText = _this.rickToggled ? 'Toggle off' : 'Toggle on';
+            return $('#rick-button').html(newText);
           };
         })(this));
+      };
+
+      HackView.prototype.submitFile = function() {
+        var file, formData, xhr;
+        $('#submit-file').attr('disabled', true);
+        $('#great-success-file').addClass('hidden');
+        file = $('#file-upload').get()[0].files[0];
+        formData = new FormData();
+        formData.append(file.name, file);
+        xhr = new XMLHttpRequest();
+        xhr.open('POST', "/file", true);
+        xhr.onload = (function(_this) {
+          return function(e) {
+            console.debug('all is well');
+            $('#submit-file').removeAttr('disabled');
+            $('#great-success-file').removeClass('hidden');
+            return _this.render();
+          };
+        })(this);
+        return xhr.send(formData);
       };
 
       return HackView;
