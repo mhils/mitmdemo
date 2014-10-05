@@ -29,7 +29,9 @@
             </div>
             <div class="panel-body">
                 <% for (var i=0; i < images.length; i++) { var image = images[i]; %>
-                    <img src="<%= image.get('imageURL') %>" class="image img-rounded image-grouped" />
+                    <% if (image.get('src') == selected) {%>
+                        <img src="<%= image.get('imageURL') %>" class="image img-rounded image-grouped" />
+                    <% }%>
                 <% } %>
             </div>
         </div>

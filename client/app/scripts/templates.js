@@ -80,9 +80,13 @@ __p += '\n        <div class="panel panel-default">\n            <div class="pan
 ((__t = ( selected )) == null ? '' : __t) +
 '</span>\n            </div>\n            <div class="panel-body">\n                ';
  for (var i=0; i < images.length; i++) { var image = images[i]; ;
-__p += '\n                    <img src="' +
+__p += '\n                    ';
+ if (image.get('src') == selected) {;
+__p += '\n                        <img src="' +
 ((__t = ( image.get('imageURL') )) == null ? '' : __t) +
-'" class="image img-rounded image-grouped" />\n                ';
+'" class="image img-rounded image-grouped" />\n                    ';
+ };
+__p += '\n                ';
  } ;
 __p += '\n            </div>\n        </div>\n    ';
  } ;
